@@ -1,0 +1,27 @@
+{
+  "name": "winner-contract",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brauliofonseca/winner-contract.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brauliofonseca/winner-contract/issues"
+  },
+  "homepage": "https://github.com/brauliofonseca/winner-contract#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "hardhat": "^2.12.6"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.1"
+  }
+}
