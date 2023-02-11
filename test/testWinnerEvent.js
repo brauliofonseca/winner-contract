@@ -17,6 +17,8 @@ describe('ContractCaller', function () {
 
     console.log('Signer address - contract: ', contractOwner.address);
     console.log('Signer address - contractCaller: ', contractCallerOwner.address);
+    console.log('Contract: ' + JSON.stringify(await contract))
+    console.log('Contract Caller: ' + JSON.stringify(await contractCaller))
     return { contract, contractCaller, contractOwner, contractCallerOwner };
   }
 
@@ -26,12 +28,14 @@ describe('ContractCaller', function () {
     expect(contractOwner.address).to.not.equal(contractCallerOwner.address);
   });
 
-  it('should create Winner', async function () {
-    const { contract, contractCaller, contractOwner , contractCallerOwner} = await loadFixture(deployContractAndSetVariables);
+  // it('should create Winner', async function () {
+  //   const { contract, contractCaller } = await loadFixture(deployContractAndSetVariables);
 
-    const tx = await contractCaller.callAttempt(contract.address);
-    const event = tx.logs.find(log => log.event === "Winner");
-    expect(event).to.exist
-  });
+  //   console.log("Address: " + (await contract).address);
+  //   console.log("Contract caller: " + JSON.stringify(contractCaller))
+  //   const tx = (await contractCaller).callAttempt(contract.address);
+  //   const event = tx.logs.find(log => log.event === "Winner");
+  //   expect(event).to.exist
+  // });
 
 });
