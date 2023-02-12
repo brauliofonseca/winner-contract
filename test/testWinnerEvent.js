@@ -7,35 +7,40 @@ describe('ContractCaller', function () {
   // We use loadFixture to run this setup once, snapshot that state,
   // and reset Hardhat Network to that snapshot in every test.
   async function deployContractAndSetVariables() {
+    const [contractOwner, contractCallerOwner, extraAddr] = await ethers.getSigners();
+
     const Contract = await ethers.getContractFactory('Contract');
     const ContractCaller = await ethers.getContractFactory('ContractCaller');
 
-    const contract = Contract.deploy();
-    const contractCaller = ContractCaller.deploy();
+    const contract = await Contract.connect(contractOwner).deploy();
+    const contractCaller = await ContractCaller.connect(contractCallerOwner).deploy();
 
-    const [contractOwner, contractCallerOwner] = await ethers.getSigners();
+    await contract.deployed();
+    await contractCaller.deployed();
 
-    console.log('Signer address - contract: ', contractOwner.address);
-    console.log('Signer address - contractCaller: ', contractCallerOwner.address);
-    console.log('Contract: ' + JSON.stringify(await contract))
-    console.log('Contract Caller: ' + JSON.stringify(await contractCaller))
-    return { contract, contractCaller, contractOwner, contractCallerOwner };
+    // console.log('Signer address - contract: ', contractOwner.address);
+    // console.log('Signer address - contractCaller: ', extraAddr.address);
+    // console.log('Contract: ' + JSON.stringify(await contract))
+    // console.log('Contract Caller: ' + JSON.stringify(await contractCaller))
+    return { contract, contractCaller, contractOwner, contractCallerOwner, extraAddr};
   }
 
-  it('should deploy correctly', async function () {
-    const { contractOwner , contractCallerOwner} = await loadFixture(deployContractAndSetVariables);
-
-    expect(contractOwner.address).to.not.equal(contractCallerOwner.address);
+  it('Should deploy contract with different owner addresses', async function () {
+    const { contract, contractCaller } = await loadFixture(deployContractAndSetVariables);
+    expect(await contract.signer).to.not.equal(await contractCaller.signer);
   });
 
-  // it('should create Winner', async function () {
-  //   const { contract, contractCaller } = await loadFixture(deployContractAndSetVariables);
+  it('Should emit Winner event', async function () {
+    const { contract, contractCaller, contractOwner, contractCallerOwner } = await loadFixture(deployContractAndSetVariables);
 
-  //   console.log("Address: " + (await contract).address);
-  //   console.log("Contract caller: " + JSON.stringify(contractCaller))
-  //   const tx = (await contractCaller).callAttempt(contract.address);
-  //   const event = tx.logs.find(log => log.event === "Winner");
-  //   expect(event).to.exist
-  // });
+    if (contractCaller === undefined) {
+      console.log("Found errors")
+    }
+    const transaction = await contractCaller.callAttempt(contract.address);
+    const completedTransaction = await transaction.wait()
+
+    console.log("Transaction obj: " + JSON.stringify(completedTransaction))
+    expect(completedTransaction.logs[0]).to.not.equal(undefined);
+  });
 
 });
